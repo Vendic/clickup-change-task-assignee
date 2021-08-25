@@ -70,9 +70,6 @@ const run = async (): Promise<void> => {
     } catch (error) {
         core.setFailed(`Action failed: ${error}`)
     }
-
 }
-
-run()
 
 export default run

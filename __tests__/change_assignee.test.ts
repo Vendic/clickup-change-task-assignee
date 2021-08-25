@@ -1,13 +1,14 @@
 import * as core from '@actions/core'
-import run from '../change_assignee'
 import * as fs from "fs";
 import nock from "nock";
+import run from "../change_assignee";
 
 describe('Assigns the task to Bar and Baz, removes user Foo', () => {
     it('does a call to the Clickup API', async () => {
         // Mocks
         const infoMock = jest.spyOn(core, 'info')
         const debugMock = jest.spyOn(core, 'debug')
+        const failedMock = jest.spyOn(core, 'setFailed')
 
         const getReply = fs.readFileSync(__dirname + '/' + 'get_response.json', 'utf-8')
         nock('https://api.clickup.com')
@@ -33,6 +34,8 @@ describe('Assigns the task to Bar and Baz, removes user Foo', () => {
                 ]
             }
         }
+
+        expect(failedMock).toHaveBeenCalledTimes(0)
         expect(debugMock).toHaveBeenCalledWith(JSON.stringify(body))
         expect(infoMock).toHaveBeenCalledWith('MAX-185 assigned to Bar')
         expect(infoMock).toHaveBeenCalledWith('MAX-185 assigned to Baz')
