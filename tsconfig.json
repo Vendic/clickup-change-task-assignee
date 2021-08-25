@@ -11,8 +11,7 @@
         "noImplicitAny": true,
         "removeComments": false,
         "preserveConstEnums": true,
-        "moduleResolution": "node",
-        "sourceMap": true
+        "moduleResolution": "node"
     },
     "exclude": ["node_modules", "**/*.test.ts"]
 }

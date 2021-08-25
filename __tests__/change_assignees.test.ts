@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import * as fs from "fs";
 import nock from "nock";
 import {expect, test} from '@jest/globals'
-import run from '../src/main'
+import change_assignees from '../src/change_assignees'
 
 test('Assigns the task to Bar and Baz, removes user Foo', async () => {
     // Settings
@@ -28,7 +28,7 @@ test('Assigns the task to Bar and Baz, removes user Foo', async () => {
         .put('/api/v2/task/MAX-185/?custom_task_ids=true&team_id=123')
         .reply(200, putReply)
 
-    await run()
+    await change_assignees()
 
     // Assertions
     const body = {

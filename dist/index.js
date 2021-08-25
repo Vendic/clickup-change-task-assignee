@@ -4446,37 +4446,38 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
+// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(5127);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7126);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(5747);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_2__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(5127);
+// EXTERNAL MODULE: ./node_modules/axios/index.js
+var axios = __nccwpck_require__(7126);
+var axios_default = /*#__PURE__*/__nccwpck_require__.n(axios);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(5747);
+;// CONCATENATED MODULE: ./src/change_assignees.ts
 
 
 
 function getTargetAssignees(target_assignees_usernames, clickup_user_id_mapping) {
     return target_assignees_usernames.map(username => clickup_user_id_mapping[username.toString()]).filter(id => id !== undefined);
 }
-async function run() {
+async function change_assignees() {
     var _a, _b, _c;
     try {
         let failed = false;
-        const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('clickup_token');
-        const task_ids = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getMultilineInput('clickup_custom_task_ids');
-        const team_id = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('clickup_team_id');
-        const target_assignees_usernames = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getMultilineInput('target_assignees_usernames');
-        const mapping_path = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('clickup_user_id_mapping_path');
-        const mapping_json = fs__WEBPACK_IMPORTED_MODULE_2__.readFileSync(mapping_path, 'utf-8');
+        const token = core.getInput('clickup_token');
+        const task_ids = core.getMultilineInput('clickup_custom_task_ids');
+        const team_id = core.getInput('clickup_team_id');
+        const target_assignees_usernames = core.getMultilineInput('target_assignees_usernames');
+        const mapping_path = core.getInput('clickup_user_id_mapping_path');
+        const mapping_json = external_fs_.readFileSync(mapping_path, 'utf-8');
         const mapping = JSON.parse(mapping_json);
         const target_assignees = getTargetAssignees(target_assignees_usernames, mapping);
         for (const task_id of task_ids) {
             let endpoint = `https://api.clickup.com/api/v2/task/${task_id}/?custom_task_ids=true&team_id=${team_id}`;
-            let result = await axios__WEBPACK_IMPORTED_MODULE_1___default().get(endpoint, {
+            let result = await axios_default().get(endpoint, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
@@ -4495,17 +4496,17 @@ async function run() {
                     ]
                 }
             };
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(body));
-            await axios__WEBPACK_IMPORTED_MODULE_1___default().put(endpoint, body, {
+            core.debug(JSON.stringify(body));
+            await axios_default().put(endpoint, body, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
                 }
             }).then((result) => {
-                result.data.assignees.forEach((assignee) => _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`${task_id} assigned to ${assignee.username}`));
+                result.data.assignees.forEach((assignee) => core.info(`${task_id} assigned to ${assignee.username}`));
             }).catch(function (error) {
                 failed = true;
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`${task_id} error: ${error.message}`);
+                core.info(`${task_id} error: ${error.message}`);
             });
         }
         if (failed) {
@@ -4513,14 +4514,13 @@ async function run() {
         }
     }
     catch (error) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`Action failed: ${error}`);
+        core.setFailed(`Action failed: ${error}`);
     }
 }
-// Jest executes this file twice, which is annoying during debugging.
-if (process.env.JEST_WORKER_ID === undefined) {
-    run();
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (run);
+
+;// CONCATENATED MODULE: ./src/main.ts
+
+change_assignees();
 
 })();
 
