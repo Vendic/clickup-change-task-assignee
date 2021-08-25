@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import axios from 'axios'
+import * as fs from "fs";
 
 function getTargetAssignees(target_assignees_usernames: string[], clickup_user_id_mapping: any) {
     return target_assignees_usernames.map(
@@ -10,12 +11,14 @@ function getTargetAssignees(target_assignees_usernames: string[], clickup_user_i
 const run = async (): Promise<void> => {
     try {
         let failed: boolean = false;
-        const token : string = core.getInput('clickup_token')
+        const token: string = core.getInput('clickup_token')
         const task_ids : string[] = core.getMultilineInput('clickup_custom_task_ids')
         const team_id : string = core.getInput('clickup_team_id')
         const target_assignees_usernames : string[] = core.getMultilineInput('target_assignees_usernames')
-        const clickup_user_id_mapping : any = JSON.parse(core.getInput('clickup_user_id_mapping'))
-        const target_assignees: number[] = getTargetAssignees(target_assignees_usernames, clickup_user_id_mapping)
+        const mapping_path : string = core.getInput('clickup_user_id_mapping_path')
+        const mapping_json : string = fs.readFileSync(mapping_path, 'utf-8')
+        const mapping : any = JSON.parse(mapping_json)
+        const target_assignees: number[] = getTargetAssignees(target_assignees_usernames, mapping)
 
         for (const task_id of task_ids) {
             let endpoint = `https://api.clickup.com/api/v2/task/${task_id}/?custom_task_ids=true&team_id=${team_id}`

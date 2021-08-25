@@ -46,7 +46,7 @@ beforeEach(() => {
     process.env['INPUT_CLICKUP_CUSTOM_TASK_IDS'] = 'MAX-185'
     process.env['INPUT_CLICKUP_TEAM_ID'] = '123'
     process.env['INPUT_TARGET_ASSIGNEES_USERNAMES'] = 'bar\nbaz\nsome-random-user'
-    process.env['INPUT_CLICKUP_USER_ID_MAPPING'] = fs.readFileSync(__dirname + '/' + 'user_mapping.json', 'utf-8')
+    process.env['INPUT_CLICKUP_USER_ID_MAPPING_PATH'] = __dirname + '/' + 'user_mapping.json'
 })
 
 afterEach(() => {
@@ -54,5 +54,5 @@ afterEach(() => {
     delete process.env['INPUT_CLICKUP_CUSTOM_TASK_IDS']
     delete process.env['INPUT_CLICKUP_TEAM_ID']
     delete process.env['INPUT_TARGET_ASSIGNEES_USERNAMES']
-    delete process.env['INPUT_CLICKUP_USER_ID_MAPPING']
+    delete process.env['INPUT_CLICKUP_USER_ID_MAPPING_PATH']
 })

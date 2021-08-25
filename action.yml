@@ -17,7 +17,7 @@ inputs:
     target_assignees_usernames:
         description: The Github usernames of the target assignees
         required: true
-    clickup_user_id_mapping:
-        description: Expects a JSON string that maps the Github users to Clickup user id's
+    clickup_user_id_mapping_path:
+        description: Expects a JSON file path that maps the Github users to Clickup user id's
         required: true
 
