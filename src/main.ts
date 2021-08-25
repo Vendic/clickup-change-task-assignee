@@ -72,4 +72,9 @@ async function run(): Promise<void> {
     }
 }
 
+// Jest executes this file twice, which is annoying during debugging.
+if (process.env.JEST_WORKER_ID === undefined) {
+    run()
+}
+
 export default run
