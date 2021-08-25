@@ -1,5 +1,5 @@
-name: 'clickup-change-status'
-description: 'Change your task status in Clickup'
+name: 'clickup-change-task-assignee'
+description: 'Github action to automatically change the status of task in Clickup'
 author: 'Tjitse-E'
 runs:
     using: 'node12'
@@ -14,7 +14,10 @@ inputs:
     clickup_team_id:
         description: Your clickup team id
         required: true
-    clickup_status:
-        description: The target status of your task
+    target_assignees_usernames:
+        description: The Github usernames of the target assignees
+        required: true
+    clickup_user_id_mapping:
+        description: Expects a JSON string that maps the Github users to Clickup user id's
         required: true
 
