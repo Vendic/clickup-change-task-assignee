@@ -8,7 +8,7 @@ function getTargetAssignees(target_assignees_usernames: string[], clickup_user_i
     ).filter(id => id !== undefined);
 }
 
-const run = async (): Promise<void> => {
+export default async function change_assignees(): Promise<void> {
     try {
         let failed: boolean = false;
         const token: string = core.getInput('clickup_token')
@@ -71,5 +71,3 @@ const run = async (): Promise<void> => {
         core.setFailed(`Action failed: ${error}`)
     }
 }
-
-export default run
