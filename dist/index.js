@@ -4516,7 +4516,6 @@ const run = async () => {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`Action failed: ${error}`);
     }
 };
-run();
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (run);
 
 })();
