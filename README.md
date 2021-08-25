@@ -37,6 +37,7 @@ Put the id's in a JSON file, for example `mapping.json` and commit it to your re
 ```yml
 
 name: Assign clickup user
+uses: Vendic/clickup-change-task-assignee@master
 with:
   clickup_token: pk_123
   clickup_custom_task_ids: |
