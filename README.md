@@ -1,4 +1,4 @@
-# Clickup change status action [![Tests](https://github.com/Tjitse-E/clickup-change-status/actions/workflows/tests.yml/badge.svg)](https://github.com/Tjitse-E/clickup-change-status/actions/workflows/tests.yml)
+# Clickup change status action [![Tests](https://github.com/Vendic/clickup-change-task-assignee/actions/workflows/tests.yml/badge.svg)](https://github.com/Vendic/clickup-change-task-assignee/actions/workflows/tests.yml)
 Github action to automatically change the status of task in Clickup
 
 ### Setup
@@ -35,19 +35,23 @@ Put the id's in a JSON file, for example `mapping.json` and commit it to your re
 
 ### Usage
 ```yml
+            -   name: Get clickup team ID
+                env:
+                    clickup_token: ${{ secrets.CLICKUP_TOKEN }}
+                run: |
+                    TEAM_ID=$(curl --location --request GET 'https://api.clickup.com/api/v2/team' --header "Authorization: $clickup_token" --header 'Content-Type: application/json' | jq -r "(.teams | first).id")
+                    echo "TEAM_ID=${TEAM_ID}" >> $GITHUB_ENV
 
-name: Assign clickup user
-uses: Vendic/clickup-change-task-assignee@master
-with:
-  clickup_token: pk_123
-  clickup_custom_task_ids: |
-      ABC-123
-      ABC-124
-      ABC-125
-  clickup_team_id: 123
-  target_assignees_usernames: |
-      Tjitse-E
-      Foo
-      Bar
-  clickup_user_id_mapping: '{"foo": 1, "bar": 2, "baz": 3}'
+            -   name: Assign clickup users
+                uses: Vendic/clickup-change-task-assignee@master
+                with:
+                    clickup_token: ${{ secrets.CLICKUP_TOKEN }}
+                    clickup_custom_task_ids: |
+                        MAX-185
+                    clickup_team_id: ${{ env.TEAM_ID }}
+                    target_assignees_usernames: |
+                        Tjitse-E
+                    clickup_user_id_mapping_path: mapping.json
 ```
+
+The result will be that the task with id MAX-185 is added to Tjitse-E only, the original assignees are removed (if there were any to begin with).
