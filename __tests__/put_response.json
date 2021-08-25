@@ -1,0 +1,12 @@
+{
+    "assignees": [
+        {
+            "id": 1,
+            "username": "Bar"
+        },
+        {
+            "id": 3,
+            "username": "Baz"
+        }
+    ]
+}
