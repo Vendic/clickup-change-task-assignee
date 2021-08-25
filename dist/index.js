@@ -4462,7 +4462,7 @@ __nccwpck_require__.r(__webpack_exports__);
 function getTargetAssignees(target_assignees_usernames, clickup_user_id_mapping) {
     return target_assignees_usernames.map(username => clickup_user_id_mapping[username.toString()]).filter(id => id !== undefined);
 }
-const run = async () => {
+async function run() {
     var _a, _b, _c;
     try {
         let failed = false;
@@ -4515,7 +4515,7 @@ const run = async () => {
     catch (error) {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`Action failed: ${error}`);
     }
-};
+}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (run);
 
 })();

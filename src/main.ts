@@ -8,7 +8,7 @@ function getTargetAssignees(target_assignees_usernames: string[], clickup_user_i
     ).filter(id => id !== undefined);
 }
 
-const run = async (): Promise<void> => {
+async function run(): Promise<void> {
     try {
         let failed: boolean = false;
         const token: string = core.getInput('clickup_token')

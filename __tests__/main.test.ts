@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as fs from "fs";
 import nock from "nock";
-import run from "../change_assignee";
+import run from "../src/main";
 
 describe('Assigns the task to Bar and Baz, removes user Foo', () => {
     it('does a call to the Clickup API', async () => {
