@@ -4461,7 +4461,11 @@ var external_fs_ = __nccwpck_require__(5747);
 
 
 function getTargetAssignees(target_assignees_usernames, clickup_user_id_mapping) {
-    return target_assignees_usernames.map(username => clickup_user_id_mapping[username.toString()]).filter(id => id !== undefined);
+    const target_assignees = target_assignees_usernames.map(username => clickup_user_id_mapping[username.toString()]).filter(id => id !== undefined);
+    // Force return as ints, the Clickup API expects integers only.
+    return target_assignees.map((target_assignee) => {
+        return parseInt(target_assignee);
+    });
 }
 async function change_assignees() {
     var _a, _b, _c;

@@ -2,10 +2,14 @@ import * as core from '@actions/core'
 import axios from 'axios'
 import * as fs from "fs";
 
-function getTargetAssignees(target_assignees_usernames: string[], clickup_user_id_mapping: any) {
-    return target_assignees_usernames.map(
+function getTargetAssignees(target_assignees_usernames: string[], clickup_user_id_mapping: any) : number[] {
+    const target_assignees = target_assignees_usernames.map(
         username => clickup_user_id_mapping[username.toString()]
     ).filter(id => id !== undefined);
+    // Force return as ints, the Clickup API expects integers only.
+    return target_assignees.map((target_assignee) => {
+        return parseInt(target_assignee)
+    })
 }
 
 export default async function change_assignees(): Promise<void> {
