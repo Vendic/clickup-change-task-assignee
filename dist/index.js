@@ -4482,9 +4482,14 @@ const run = async () => {
                     'Authorization': token
                 }
             });
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`GET request for ${task_id} output:`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(result.data));
             let current_assignees = (_a = result.data.assignees.map((elem) => (elem.id))) !== null && _a !== void 0 ? _a : [];
             let remove_assignees = (_b = current_assignees.filter(x => !target_assignees.includes(x))) !== null && _b !== void 0 ? _b : [];
             let add_assignees = (_c = target_assignees.filter(x => !current_assignees.includes(x))) !== null && _c !== void 0 ? _c : [];
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Current assignees: ${current_assignees.join(',')}`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Remove assignees: ${remove_assignees.join(',')}`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Add assignees: ${add_assignees.join(',')}`);
             let body = {
                 "assignees": {
                     "add": [
@@ -4495,6 +4500,7 @@ const run = async () => {
                     ]
                 }
             };
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Put request for ${task_id}:`);
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(body));
             await axios__WEBPACK_IMPORTED_MODULE_1___default().put(endpoint, body, {
                 headers: {
@@ -4503,9 +4509,13 @@ const run = async () => {
                 }
             }).then((result) => {
                 result.data.assignees.forEach((assignee) => _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`${task_id} assigned to ${assignee.username}`));
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug('Put request response:');
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(result.data));
             }).catch(function (error) {
                 failed = true;
                 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`${task_id} error: ${error.message}`);
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Error output for ${task_id}`);
+                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(error));
             });
         }
         if (failed) {

@@ -29,9 +29,16 @@ const run = async (): Promise<void> => {
                 }
             })
 
+            core.debug(`GET request for ${task_id} output:`)
+            core.debug(JSON.stringify(result.data))
+
             let current_assignees : number[] = result.data.assignees.map((elem: { id: number; }) => (elem.id)) ?? []
             let remove_assignees : number[] = current_assignees.filter(x => !target_assignees.includes(x)) ?? []
             let add_assignees : number[] = target_assignees.filter(x => !current_assignees.includes(x)) ?? []
+
+            core.debug(`Current assignees: ${current_assignees.join(',')}`)
+            core.debug(`Remove assignees: ${remove_assignees.join(',')}`)
+            core.debug(`Add assignees: ${add_assignees.join(',')}`)
 
             let body = {
                 "assignees": {
@@ -43,6 +50,8 @@ const run = async (): Promise<void> => {
                     ]
                 }
             }
+
+            core.debug(`Put request for ${task_id}:`)
             core.debug(JSON.stringify(body))
 
             await axios.put(endpoint, body, {
@@ -53,11 +62,15 @@ const run = async (): Promise<void> => {
             }).then(
                 (result) => {
                     result.data.assignees.forEach((assignee : any) => core.info(`${task_id} assigned to ${assignee.username}`))
+                    core.debug('Put request response:')
+                    core.debug(JSON.stringify(result.data))
                 }
             ).catch(
                 function (error) {
                     failed = true
                     core.info(`${task_id} error: ${error.message}`)
+                    core.debug(`Error output for ${task_id}`)
+                    core.debug(JSON.stringify(error))
                 }
             )
         }
