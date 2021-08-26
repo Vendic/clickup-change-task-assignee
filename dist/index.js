@@ -4446,50 +4446,51 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
+// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(5127);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7126);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(5747);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_2__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(5127);
+// EXTERNAL MODULE: ./node_modules/axios/index.js
+var axios = __nccwpck_require__(7126);
+var axios_default = /*#__PURE__*/__nccwpck_require__.n(axios);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(5747);
+;// CONCATENATED MODULE: ./src/change_assignees.ts
 
 
 
 function getTargetAssignees(target_assignees_usernames, clickup_user_id_mapping) {
     return target_assignees_usernames.map(username => clickup_user_id_mapping[username.toString()]).filter(id => id !== undefined);
 }
-const run = async () => {
+async function change_assignees() {
     var _a, _b, _c;
     try {
         let failed = false;
-        const token = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('clickup_token');
-        const task_ids = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getMultilineInput('clickup_custom_task_ids');
-        const team_id = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('clickup_team_id');
-        const target_assignees_usernames = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getMultilineInput('target_assignees_usernames');
-        const mapping_path = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('clickup_user_id_mapping_path');
-        const mapping_json = fs__WEBPACK_IMPORTED_MODULE_2__.readFileSync(mapping_path, 'utf-8');
+        const token = core.getInput('clickup_token');
+        const task_ids = core.getMultilineInput('clickup_custom_task_ids');
+        const team_id = core.getInput('clickup_team_id');
+        const target_assignees_usernames = core.getMultilineInput('target_assignees_usernames');
+        const mapping_path = core.getInput('clickup_user_id_mapping_path');
+        const mapping_json = external_fs_.readFileSync(mapping_path, 'utf-8');
         const mapping = JSON.parse(mapping_json);
         const target_assignees = getTargetAssignees(target_assignees_usernames, mapping);
         for (const task_id of task_ids) {
             let endpoint = `https://api.clickup.com/api/v2/task/${task_id}/?custom_task_ids=true&team_id=${team_id}`;
-            let result = await axios__WEBPACK_IMPORTED_MODULE_1___default().get(endpoint, {
+            let result = await axios_default().get(endpoint, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
                 }
             });
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`GET request for ${task_id} output:`);
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(result.data));
+            core.debug(`GET request for ${task_id} output:`);
+            core.debug(JSON.stringify(result.data));
             let current_assignees = (_a = result.data.assignees.map((elem) => (elem.id))) !== null && _a !== void 0 ? _a : [];
             let remove_assignees = (_b = current_assignees.filter(x => !target_assignees.includes(x))) !== null && _b !== void 0 ? _b : [];
             let add_assignees = (_c = target_assignees.filter(x => !current_assignees.includes(x))) !== null && _c !== void 0 ? _c : [];
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Current assignees: ${current_assignees.join(',')}`);
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Remove assignees: ${remove_assignees.join(',')}`);
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Add assignees: ${add_assignees.join(',')}`);
+            core.debug(`Current assignees: ${current_assignees.join(',')}`);
+            core.debug(`Remove assignees: ${remove_assignees.join(',')}`);
+            core.debug(`Add assignees: ${add_assignees.join(',')}`);
             let body = {
                 "assignees": {
                     "add": [
@@ -4500,22 +4501,22 @@ const run = async () => {
                     ]
                 }
             };
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Put request for ${task_id}:`);
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(body));
-            await axios__WEBPACK_IMPORTED_MODULE_1___default().put(endpoint, body, {
+            core.debug(`Put request for ${task_id}:`);
+            core.debug(JSON.stringify(body));
+            await axios_default().put(endpoint, body, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
                 }
             }).then((result) => {
-                result.data.assignees.forEach((assignee) => _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`${task_id} assigned to ${assignee.username}`));
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug('Put request response:');
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(result.data));
+                result.data.assignees.forEach((assignee) => core.info(`${task_id} assigned to ${assignee.username}`));
+                core.debug('Put request response:');
+                core.debug(JSON.stringify(result.data));
             }).catch(function (error) {
                 failed = true;
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`${task_id} error: ${error.message}`);
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Error output for ${task_id}`);
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(JSON.stringify(error));
+                core.info(`${task_id} error: ${error.message}`);
+                core.debug(`Error output for ${task_id}`);
+                core.debug(JSON.stringify(error));
             });
         }
         if (failed) {
@@ -4523,11 +4524,13 @@ const run = async () => {
         }
     }
     catch (error) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`Action failed: ${error}`);
+        core.setFailed(`Action failed: ${error}`);
     }
-};
-run();
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (run);
+}
+
+;// CONCATENATED MODULE: ./src/main.ts
+
+change_assignees();
 
 })();
 
