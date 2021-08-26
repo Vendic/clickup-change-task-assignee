@@ -79,7 +79,6 @@ export default async function change_assignees(): Promise<void> {
             )
         }
 
-
         if (failed) {
             throw 'One of the API requests has failed. Please check the logs for more details.'
         }
