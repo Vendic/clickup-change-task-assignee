@@ -1,6 +1,6 @@
 {
     "name": "clickup-change-task-assignee",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "description": "Github action to automatically change the status of task in Clickup",
     "main": "src/main.ts",
     "scripts": {
