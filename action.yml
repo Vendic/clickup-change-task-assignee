@@ -20,4 +20,7 @@ inputs:
     clickup_user_id_mapping_path:
         description: Expects a JSON file path that maps the Github users to Clickup user id's
         required: true
-
+    add_assignees:
+        description: The default behaviour is that this action adds users. If you want to remove users set it to 'false'
+        required: false
+        default: true

@@ -4451,24 +4451,75 @@ __nccwpck_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(5127);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(5747);
 // EXTERNAL MODULE: ./node_modules/axios/index.js
 var axios = __nccwpck_require__(7126);
 var axios_default = /*#__PURE__*/__nccwpck_require__.n(axios);
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(5747);
+;// CONCATENATED MODULE: ./src/api_calls.ts
+
+
+async function addAssignees(task_id, team_id, token, target_assignees) {
+    var _a, _b, _c;
+    let endpoint = `https://api.clickup.com/api/v2/task/${task_id}/?custom_task_ids=true&team_id=${team_id}`;
+    let result = await axios_default().get(endpoint, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        }
+    });
+    core.debug(`GET request for ${task_id} output:`);
+    core.debug(JSON.stringify(result.data));
+    let current_assignees = (_a = result.data.assignees.map((elem) => (elem.id))) !== null && _a !== void 0 ? _a : [];
+    let remove_assignees = (_b = current_assignees.filter(x => !target_assignees.includes(x))) !== null && _b !== void 0 ? _b : [];
+    let add_assignees = (_c = target_assignees.filter(x => !current_assignees.includes(x))) !== null && _c !== void 0 ? _c : [];
+    core.debug(`Current assignees: ${current_assignees.join(',')}`);
+    core.debug(`Remove assignees: ${remove_assignees.join(',')}`);
+    core.debug(`Add assignees: ${add_assignees.join(',')}`);
+    const body = {
+        "assignees": {
+            "add": [
+                ...add_assignees
+            ],
+            "rem": [
+                ...remove_assignees
+            ]
+        }
+    };
+    await put(task_id, body, endpoint, token);
+}
+async function removeAssignees(task_id, team_id, token, target_assignees) {
+    const endpoint = `https://api.clickup.com/api/v2/task/${task_id}/?custom_task_ids=true&team_id=${team_id}`;
+    const body = {
+        "assignees": {
+            "add": [],
+            "rem": [
+                ...target_assignees
+            ]
+        }
+    };
+    await put(task_id, body, endpoint, token);
+}
+async function put(task_id, body, endpoint, token) {
+    core.debug(`Put request for ${task_id}:`);
+    core.debug(JSON.stringify(body));
+    await axios_default().put(endpoint, body, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        }
+    }).then((result) => {
+        result.data.assignees.forEach((assignee) => core.info(`${task_id} assigned to ${assignee.username}`));
+        core.debug('Put request response:');
+        core.debug(JSON.stringify(result.data));
+    });
+}
+
 ;// CONCATENATED MODULE: ./src/change_assignees.ts
 
 
 
-function getTargetAssignees(target_assignees_usernames, clickup_user_id_mapping) {
-    const target_assignees = target_assignees_usernames.map(username => clickup_user_id_mapping[username.toString()]).filter(id => id !== undefined);
-    // Force return as ints, the Clickup API expects integers only.
-    return target_assignees.map((target_assignee) => {
-        return parseInt(target_assignee);
-    });
-}
 async function change_assignees() {
-    var _a, _b, _c;
     try {
         let failed = false;
         const token = core.getInput('clickup_token');
@@ -4479,49 +4530,22 @@ async function change_assignees() {
         const mapping_json = external_fs_.readFileSync(mapping_path, 'utf-8');
         const mapping = JSON.parse(mapping_json);
         const target_assignees = getTargetAssignees(target_assignees_usernames, mapping);
+        const add_assignees = core.getBooleanInput('add_assignees');
         for (const task_id of task_ids) {
-            let endpoint = `https://api.clickup.com/api/v2/task/${task_id}/?custom_task_ids=true&team_id=${team_id}`;
-            let result = await axios_default().get(endpoint, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token
+            try {
+                if (add_assignees) {
+                    await addAssignees(task_id, team_id, token, target_assignees);
                 }
-            });
-            core.debug(`GET request for ${task_id} output:`);
-            core.debug(JSON.stringify(result.data));
-            let current_assignees = (_a = result.data.assignees.map((elem) => (elem.id))) !== null && _a !== void 0 ? _a : [];
-            let remove_assignees = (_b = current_assignees.filter(x => !target_assignees.includes(x))) !== null && _b !== void 0 ? _b : [];
-            let add_assignees = (_c = target_assignees.filter(x => !current_assignees.includes(x))) !== null && _c !== void 0 ? _c : [];
-            core.debug(`Current assignees: ${current_assignees.join(',')}`);
-            core.debug(`Remove assignees: ${remove_assignees.join(',')}`);
-            core.debug(`Add assignees: ${add_assignees.join(',')}`);
-            let body = {
-                "assignees": {
-                    "add": [
-                        ...add_assignees
-                    ],
-                    "rem": [
-                        ...remove_assignees
-                    ]
+                else {
+                    await removeAssignees(task_id, team_id, token, target_assignees);
                 }
-            };
-            core.debug(`Put request for ${task_id}:`);
-            core.debug(JSON.stringify(body));
-            await axios_default().put(endpoint, body, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token
-                }
-            }).then((result) => {
-                result.data.assignees.forEach((assignee) => core.info(`${task_id} assigned to ${assignee.username}`));
-                core.debug('Put request response:');
-                core.debug(JSON.stringify(result.data));
-            }).catch(function (error) {
+            }
+            catch (error) {
                 failed = true;
                 core.info(`${task_id} error: ${error.message}`);
                 core.debug(`Error output for ${task_id}`);
                 core.debug(JSON.stringify(error));
-            });
+            }
         }
         if (failed) {
             throw 'One of the API requests has failed. Please check the logs for more details.';
@@ -4530,6 +4554,13 @@ async function change_assignees() {
     catch (error) {
         core.setFailed(`Action failed: ${error}`);
     }
+}
+function getTargetAssignees(target_assignees_usernames, clickup_user_id_mapping) {
+    const target_assignees = target_assignees_usernames.map(username => clickup_user_id_mapping[username.toString()]).filter(id => id !== undefined);
+    // Force return as ints, the Clickup API expects integers only.
+    return target_assignees.map((target_assignee) => {
+        return parseInt(target_assignee);
+    });
 }
 
 ;// CONCATENATED MODULE: ./src/main.ts
