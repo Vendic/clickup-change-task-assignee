@@ -4530,7 +4530,7 @@ async function change_assignees() {
         const mapping_json = external_fs_.readFileSync(mapping_path, 'utf-8');
         const mapping = JSON.parse(mapping_json);
         const target_assignees = getTargetAssignees(target_assignees_usernames, mapping);
-        const add_assignees = core.getBooleanInput('add_assignees_mode');
+        const add_assignees = core.getBooleanInput('add_assignees');
         for (const task_id of task_ids) {
             try {
                 if (add_assignees) {

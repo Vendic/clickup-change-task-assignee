@@ -13,7 +13,7 @@ export default async function change_assignees(): Promise<void> {
         const mapping_json: string = fs.readFileSync(mapping_path, 'utf-8')
         const mapping: any = JSON.parse(mapping_json)
         const target_assignees: number[] = getTargetAssignees(target_assignees_usernames, mapping)
-        const add_assignees : boolean = core.getBooleanInput('add_assignees_mode')
+        const add_assignees : boolean = core.getBooleanInput('add_assignees')
 
         for (const task_id of task_ids) {
             try {

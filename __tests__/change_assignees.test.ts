@@ -10,7 +10,7 @@ import change_assignees from '../src/change_assignees'
  */
 test('Default mode, assigns the task to Bar and Baz, removes user Foo', async () => {
     // Settings
-    process.env['INPUT_ADD_ASSIGNEES_MODE'] = 'true'
+    process.env['INPUT_ADD_ASSIGNEES'] = 'true'
 
     // Mocks
     const infoMock = jest.spyOn(core, 'info')
@@ -55,7 +55,7 @@ test('Default mode, assigns the task to Bar and Baz, removes user Foo', async ()
  */
 test('Remove mode, unassigns the users Baz and Bar, keeps Foo', async () => {
     // Settings
-    process.env['INPUT_ADD_ASSIGNEES_MODE'] = 'false'
+    process.env['INPUT_ADD_ASSIGNEES'] = 'false'
 
     const debugMock = jest.spyOn(core, 'debug')
     const failedMock = jest.spyOn(core, 'setFailed')
