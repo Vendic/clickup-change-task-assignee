@@ -8,7 +8,11 @@ export default async function change_assignees(): Promise<void> {
         const token: string = core.getInput('clickup_token')
         const task_ids: string[] = core.getMultilineInput('clickup_custom_task_ids')
         const team_id: string = core.getInput('clickup_team_id')
-        const target_assignees_usernames: string[] = core.getMultilineInput('target_assignees_usernames')
+        let target_assignees_usernames: any = core.getMultilineInput('target_assignees_usernames');
+        if (typeof target_assignees_usernames === 'string') {
+            target_assignees_usernames = target_assignees_usernames.split(',') as string[];
+        }
+
         const mapping_path: string = core.getInput('clickup_user_id_mapping_path')
         const mapping_json: string = fs.readFileSync(mapping_path, 'utf-8')
         const mapping: any = JSON.parse(mapping_json)
@@ -24,6 +28,7 @@ export default async function change_assignees(): Promise<void> {
                 }
             } catch (error) {
                 failed = true
+                // @ts-ignore
                 core.info(`${task_id} error: ${error.message}`)
                 core.debug(`Error output for ${task_id}`)
                 core.debug(JSON.stringify(error))

@@ -2,7 +2,7 @@ name: 'clickup-change-task-assignee'
 description: 'Github action to automatically change the status of task in Clickup'
 author: 'Tjitse-E'
 runs:
-    using: 'node12'
+    using: 'node20'
     main: 'dist/index.js'
 inputs:
     clickup_token:
