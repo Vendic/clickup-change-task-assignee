@@ -6272,7 +6272,11 @@ async function change_assignees() {
         const team_id = core.getInput('clickup_team_id');
         let target_assignees_usernames = core.getMultilineInput('target_assignees_usernames');
         if (typeof target_assignees_usernames === 'string') {
+            core.info(`Received target assignees as a string, splitting on ','`);
             target_assignees_usernames = target_assignees_usernames.split(',');
+        }
+        else {
+            core.info(`Received target assignees as an array`);
         }
         core.info(`Target assignees:`);
         core.info(target_assignees_usernames.join(','));

@@ -10,7 +10,10 @@ export default async function change_assignees(): Promise<void> {
         const team_id: string = core.getInput('clickup_team_id')
         let target_assignees_usernames: any = core.getMultilineInput('target_assignees_usernames');
         if (typeof target_assignees_usernames === 'string') {
+            core.info(`Received target assignees as a string, splitting on ','`);
             target_assignees_usernames = target_assignees_usernames.split(',') as string[];
+        } else {
+            core.info(`Received target assignees as an array`);
         }
 
         core.info(`Target assignees:`)
