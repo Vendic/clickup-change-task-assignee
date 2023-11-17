@@ -6274,6 +6274,8 @@ async function change_assignees() {
         if (typeof target_assignees_usernames === 'string') {
             target_assignees_usernames = target_assignees_usernames.split(',');
         }
+        core.info(`Target assignees:`);
+        core.info(target_assignees_usernames.join(','));
         const mapping_path = core.getInput('clickup_user_id_mapping_path');
         const mapping_json = fs.readFileSync(mapping_path, 'utf-8');
         const mapping = JSON.parse(mapping_json);

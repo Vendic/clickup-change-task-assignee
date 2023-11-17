@@ -13,6 +13,9 @@ export default async function change_assignees(): Promise<void> {
             target_assignees_usernames = target_assignees_usernames.split(',') as string[];
         }
 
+        core.info(`Target assignees:`)
+        core.info(target_assignees_usernames.join(','));
+
         const mapping_path: string = core.getInput('clickup_user_id_mapping_path')
         const mapping_json: string = fs.readFileSync(mapping_path, 'utf-8')
         const mapping: any = JSON.parse(mapping_json)
